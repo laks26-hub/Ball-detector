@@ -1,0 +1,7 @@
+# Python bytecode and local virtual environments
+__pycache__/
+*.py[cod]
+.venv/
+
+# Downloaded YOLO weights are restored automatically at first launch.
+models/*.pt

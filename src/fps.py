@@ -4,6 +4,7 @@ This module is designed for real-time applications such as YOLO11n object detect
 pipelines, where negligible CPU overhead and thread safety are critical.
 """
 
+from collections import deque
 from dataclasses import dataclass
 import threading
 import time
@@ -215,3 +216,20 @@ class FPS:
             "frame_count": stats.frame_count,
             "total_runtime": stats.total_runtime,
         }
+
+
+class FPSCounter:
+    """Compute FPS from a moving window of recent frame timestamps."""
+
+    def __init__(self, window_size: int = 30) -> None:
+        if window_size < 2:
+            raise ValueError("window_size must be at least 2")
+        self._timestamps: deque[float] = deque(maxlen=window_size)
+
+    def update(self) -> float:
+        """Record a displayed frame and return the moving-average FPS."""
+        self._timestamps.append(time.perf_counter())
+        if len(self._timestamps) < 2:
+            return 0.0
+        elapsed = self._timestamps[-1] - self._timestamps[0]
+        return (len(self._timestamps) - 1) / elapsed if elapsed > 0 else 0.0

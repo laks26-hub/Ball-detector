@@ -4,6 +4,7 @@ This module organizes all settings into logical sections using Python dataclasse
 providing automatic hardware detection (CUDA) and input validation.
 """
 
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Tuple
@@ -181,3 +182,19 @@ class SystemConfig:
 
 # Global singleton CONFIG object accessible across modules
 CONFIG = SystemConfig()
+
+# Environment-overridable settings used by the webcam application. CONFIG
+# remains available above for code that uses the detailed configuration API.
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+MODELS_DIR = PROJECT_ROOT / "models"
+CAMERA_ID = int(os.getenv("BALL_DETECTOR_CAMERA_ID", "0"))
+MODEL_PATH = Path(
+    os.getenv("BALL_DETECTOR_MODEL_PATH", str(MODELS_DIR / "yolo11n.pt"))
+)
+CONFIDENCE_THRESHOLD = float(os.getenv("BALL_DETECTOR_CONFIDENCE", "0.35"))
+IOU_THRESHOLD = float(os.getenv("BALL_DETECTOR_IOU", "0.45"))
+WINDOW_NAME = "HackTronix 2.0 - Real-Time Ball Detection"
+FRAME_WIDTH = int(os.getenv("BALL_DETECTOR_FRAME_WIDTH", "640"))
+FRAME_HEIGHT = int(os.getenv("BALL_DETECTOR_FRAME_HEIGHT", "480"))
+INFERENCE_IMAGE_SIZE = int(os.getenv("BALL_DETECTOR_IMAGE_SIZE", "640"))
+BALL_CLASS_NAMES = {"sports ball", "ball"}
